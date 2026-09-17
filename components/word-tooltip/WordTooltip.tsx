@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { browser } from 'wxt/browser';
 import { hideWordTooltip, useWordTooltip } from './PopupStore';
 import type { NewCardResponse } from '@/utils/cards';
@@ -14,21 +14,18 @@ export function WordTooltip() {
   const [answer, setAnswer] = useState('');
   const [status, setStatus] = useState<SaveStatus>('idle');
   const [error, setError] = useState('');
-  const fetchedRef = useRef(false);
 
   useEffect(() => {
     if (!state.visible) return;
     setStatus('idle');
     setError('');
-    if (fetchedRef.current) return;
     (async () => {
       const res = (await browser.runtime.sendMessage({ type: 'get-categories' })) as
         | { ok: true; categories: string[] }
         | { ok: false; error: string };
       if (res?.ok && res.categories.length > 0) {
-        fetchedRef.current = true;
         setCategories(res.categories);
-        setCategory((prev) => prev || res.categories[0]!);
+        setCategory((prev) => (prev && res.categories.includes(prev) ? prev : res.categories[0]!));
       } else {
         setError('Failed to load categories. Please sign in with Google in the extension first.');
         setStatus('error');

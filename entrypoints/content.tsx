@@ -86,9 +86,8 @@ export default defineContentScript({
     }
 
     function isInsideOurUi(event: Event): boolean {
-      const target = event.target;
-      if (!(target instanceof Node)) return false;
-      return target.getRootNode() === ui.shadow;
+      const first = event.composedPath()[0];
+      return first instanceof Node && ui.shadow.contains(first);
     }
 
     function onMouseUp(event: MouseEvent): void {

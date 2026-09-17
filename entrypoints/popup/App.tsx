@@ -41,6 +41,7 @@ function App() {
   const [signingIn, setSigningIn] = useState(false);
   const [signInError, setSignInError] = useState('');
   const [categories, setCategories] = useState<string[]>([]);
+  const [activeCategory, setActiveCategory] = useState('');
   const [cards, setCards] = useState<Card[]>([]);
   const [cardsLoading, setCardsLoading] = useState(false);
 
@@ -118,13 +119,21 @@ function App() {
     }
   };
 
+  const visibleCards = activeCategory
+    ? cards.filter((c) => c.category === activeCategory)
+    : cards;
+
+  const handleCategoryClick = (category: string) => {
+    setActiveCategory((prev) => (prev === category ? '' : category));
+  };
+
   return (
     <div className="flex min-h-[100dvh] flex-col bg-gray-50">
       <header className="sticky top-0 z-10 flex items-center justify-between border-b border-gray-200 bg-white px-4 py-3">
         <div className="flex items-center gap-2">
           <h1 className="text-base font-bold text-gray-900">Word Book</h1>
           <span className="rounded-full bg-blue-100 px-2 py-0.5 text-xs font-medium text-blue-700">
-            {cards.length}
+            {visibleCards.length}
           </span>
         </div>
         {user ? (
@@ -161,13 +170,27 @@ function App() {
             </h2>
             <div className="flex flex-wrap gap-1.5">
               {categories.map((category) => (
-                <span
+                <button
                   key={category}
-                  className="rounded-full bg-indigo-50 px-2.5 py-1 text-xs font-medium text-indigo-600"
+                  onClick={() => handleCategoryClick(category)}
+                  className={
+                    'rounded-full px-2.5 py-1 text-xs font-medium transition-colors ' +
+                    (activeCategory === category
+                      ? 'bg-indigo-600 text-white'
+                      : 'bg-indigo-50 text-indigo-600 hover:bg-indigo-100')
+                  }
                 >
                   {category}
-                </span>
+                </button>
               ))}
+              {activeCategory ? (
+                <button
+                  onClick={() => setActiveCategory('')}
+                  className="rounded-full bg-gray-100 px-2.5 py-1 text-xs font-medium text-gray-500 hover:bg-gray-200"
+                >
+                  All
+                </button>
+              ) : null}
             </div>
           </section>
 
@@ -190,9 +213,14 @@ function App() {
                 </p>
               ) : null}
             </div>
+          ) : visibleCards.length === 0 ? (
+            <div className="flex flex-1 flex-col items-center justify-center gap-2 px-6 py-10 text-center">
+              <p className="text-sm font-medium text-gray-600">No cards in this category</p>
+              <p className="text-xs text-gray-400">Pick another category or click 'All' to see all cards</p>
+            </div>
           ) : (
             <ul className="flex-1 divide-y divide-gray-100">
-              {cards.map((item) => (
+              {visibleCards.map((item) => (
                 <li key={item.id} className="group flex items-center gap-3 bg-white px-4 py-3">
                   <div className="min-w-0 flex-1">
                     <p className="truncate text-base font-semibold text-gray-900">{item.question}</p>
