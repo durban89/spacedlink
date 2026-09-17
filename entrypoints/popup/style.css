@@ -1,0 +1,9 @@
+@import 'tailwindcss';
+
+html,
+body {
+  margin: 0;
+  width: 360px;
+  max-height: 600px;
+  overflow-y: auto;
+}
