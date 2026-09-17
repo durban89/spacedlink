@@ -53,7 +53,8 @@ export type BackgroundMessage =
   | { type: 'new-card'; payload: NewCard }
   | { type: 'delete-card'; payload: { id: string } }
   | { type: 'get-categories' }
-  | { type: 'get-cards' };
+  | { type: 'get-cards' }
+  | { type: 'sign-in' };
 
 export type BackgroundResponse<T> =
   | ({ ok: true } & T)

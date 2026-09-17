@@ -1,11 +1,18 @@
 import { browser } from 'wxt/browser';
 import { addCard, deleteCard, getCards } from '@/utils/cards';
 import type { BackgroundMessage } from '@/utils/cards';
-import { getCategoryList } from '@/utils/firebase';
+import { getCategoryList, signInWithGoogle } from '@/utils/firebase';
 
 export default defineBackground(() => {
   browser.runtime.onMessage.addListener(async (msg: BackgroundMessage) => {
     switch (msg?.type) {
+      case 'sign-in':
+        try {
+          await signInWithGoogle();
+          return { ok: true } as const;
+        } catch (error) {
+          return { ok: false, error: String(error) } as const;
+        }
       case 'new-card':
         try {
           const id = await addCard(msg.payload);

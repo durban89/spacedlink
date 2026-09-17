@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { onAuthStateChanged, signOut } from 'firebase/auth';
 import type { User } from 'firebase/auth';
 import { browser } from 'wxt/browser';
-import { auth, ensureSignIn, getCategoryList } from '@/utils/firebase';
+import { auth, getCategoryList } from '@/utils/firebase';
 import type { Card, DeleteCardResponse } from '@/utils/cards';
 
 const GOOGLE_ICON = (
@@ -89,7 +89,12 @@ function App() {
     setSigningIn(true);
     setSignInError('');
     try {
-      await ensureSignIn();
+      const res = (await browser.runtime.sendMessage({ type: 'sign-in' })) as
+        | { ok: true }
+        | { ok: false; error: string };
+      if (!res?.ok) {
+        setSignInError(res?.error ?? 'Sign-in failed, please try again');
+      }
     } catch (error) {
       setSignInError(error instanceof Error ? error.message : 'Sign-in failed, please try again');
     } finally {
