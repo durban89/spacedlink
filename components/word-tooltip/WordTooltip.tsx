@@ -30,7 +30,7 @@ export function WordTooltip() {
         setCategories(res.categories);
         setCategory((prev) => prev || res.categories[0]!);
       } else {
-        setError('获取分类失败，请先在扩展中完成 Google 登录');
+        setError('Failed to load categories. Please sign in with Google in the extension first.');
         setStatus('error');
       }
     })();
@@ -44,7 +44,7 @@ export function WordTooltip() {
     if (status === 'saving') return;
     if (!category) {
       setStatus('error');
-      setError('请先在扩展里登录并同步分类');
+      setError('Please sign in in the extension first to sync categories');
       return;
     }
     setStatus('saving');
@@ -62,7 +62,7 @@ export function WordTooltip() {
       }, 1000);
     } else {
       setStatus('error');
-      setError(res?.error ?? '创建卡片失败');
+      setError(res?.error ?? 'Failed to create card');
     }
   };
 
@@ -89,7 +89,7 @@ export function WordTooltip() {
         <button
           type="button"
           onClick={hideWordTooltip}
-          aria-label="关闭"
+          aria-label="Close"
           className="-mr-1 -mt-1 shrink-0 rounded p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-600"
         >
           <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
@@ -98,13 +98,13 @@ export function WordTooltip() {
         </button>
       </div>
 
-      <label className="mb-1 block text-xs font-medium text-gray-500">分类</label>
+      <label className="mb-1 block text-xs font-medium text-gray-500">Category</label>
       <select
         value={category}
         onChange={(e) => setCategory(e.target.value)}
         className="mb-2 w-full rounded-lg border border-gray-200 bg-white px-2 py-1.5 text-sm text-gray-800 outline-none focus:border-blue-400"
       >
-        {categories.length === 0 ? <option value="">加载中…</option> : null}
+        {categories.length === 0 ? <option value="">Loading...</option> : null}
         {categories.map((c) => (
           <option key={c} value={c}>
             {c}
@@ -112,18 +112,18 @@ export function WordTooltip() {
         ))}
       </select>
 
-      <label className="mb-1 block text-xs font-medium text-gray-500">释义 / 备注</label>
+      <label className="mb-1 block text-xs font-medium text-gray-500">Meaning / Note</label>
       <input
         type="text"
         value={answer}
         onChange={(e) => setAnswer(e.target.value)}
-        placeholder="可选，例如单词释义"
+        placeholder="Optional, e.g. word meaning"
         className="mb-2 w-full rounded-lg border border-gray-200 bg-white px-2 py-1.5 text-sm text-gray-800 outline-none placeholder:text-gray-300 focus:border-blue-400"
       />
 
       {status === 'done' ? (
         <div className="w-full rounded-lg bg-green-50 py-1.5 text-center text-sm font-medium text-green-600">
-          已创建卡片
+          Card created
         </div>
       ) : (
         <button
@@ -131,7 +131,7 @@ export function WordTooltip() {
           disabled={status === 'saving'}
           className="w-full rounded-lg bg-blue-500 py-1.5 text-sm font-medium text-white transition-colors hover:bg-blue-600 disabled:opacity-60"
         >
-          {status === 'saving' ? '创建中…' : '创建卡片'}
+          {status === 'saving' ? 'Creating...' : 'Create card'}
         </button>
       )}
       {status === 'error' ? (

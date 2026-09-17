@@ -1,8 +1,8 @@
 {
   "name": "spacedlink",
-  "description": "划词收藏生词，随手记住不认识的英文单词",
+  "description": "Save words by selecting text. Remember unknown English words as you browse.",
   "private": true,
-  "version": "0.0.0",
+  "version": "1.0.0",
   "type": "module",
   "scripts": {
     "dev": "wxt",

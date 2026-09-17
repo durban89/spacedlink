@@ -91,7 +91,7 @@ function App() {
     try {
       await ensureSignIn();
     } catch (error) {
-      setSignInError(error instanceof Error ? error.message : '登录失败，请重试');
+      setSignInError(error instanceof Error ? error.message : 'Sign-in failed, please try again');
     } finally {
       setSigningIn(false);
     }
@@ -117,7 +117,7 @@ function App() {
     <div className="flex min-h-[100dvh] flex-col bg-gray-50">
       <header className="sticky top-0 z-10 flex items-center justify-between border-b border-gray-200 bg-white px-4 py-3">
         <div className="flex items-center gap-2">
-          <h1 className="text-base font-bold text-gray-900">生词本</h1>
+          <h1 className="text-base font-bold text-gray-900">Word Book</h1>
           <span className="rounded-full bg-blue-100 px-2 py-0.5 text-xs font-medium text-blue-700">
             {cards.length}
           </span>
@@ -128,21 +128,21 @@ function App() {
             title={user.email ?? undefined}
             className="max-w-32 truncate text-xs text-gray-400 hover:text-gray-600"
           >
-            {user.displayName ?? user.email ?? '退出登录'}
+            {user.displayName ?? user.email ?? 'Sign out'}
           </button>
         ) : null}
       </header>
 
       {!authReady ? null : !user ? (
         <div className="flex flex-col items-center gap-3 px-8 py-10">
-          <p className="text-sm text-gray-500">登录后将卡片同步到云端</p>
+          <p className="text-sm text-gray-500">Sign in to sync your cards to the cloud</p>
           <button
             onClick={handleSignIn}
             disabled={signingIn}
             className="flex items-center gap-2 rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm transition hover:bg-gray-50 disabled:opacity-60"
           >
             {GOOGLE_ICON}
-            {signingIn ? '登录中…' : '使用 Google 登录'}
+            {signingIn ? 'Signing in...' : 'Sign in with Google'}
           </button>
           {signInError ? (
             <p className="text-center text-xs text-red-500">{signInError}</p>
@@ -152,7 +152,7 @@ function App() {
         <>
           <section className="border-b border-gray-100 bg-white px-4 py-3">
             <h2 className="mb-2 text-xs font-semibold uppercase tracking-wide text-gray-400">
-              分类
+              Categories
             </h2>
             <div className="flex flex-wrap gap-1.5">
               {categories.map((category) => (
@@ -168,7 +168,7 @@ function App() {
 
           <section className="flex items-center justify-between px-4 py-3">
             <h2 className="text-xs font-semibold uppercase tracking-wide text-gray-400">
-              我的卡片
+              My cards
             </h2>
           </section>
 
@@ -176,11 +176,12 @@ function App() {
             <div className="flex flex-1 flex-col items-center justify-center gap-2 px-6 py-10 text-center">
               <p className="text-lg">📖</p>
               <p className="text-sm font-medium text-gray-600">
-                {cardsLoading ? '加载中…' : '还没有卡片'}
+                {cardsLoading ? 'Loading...' : 'No cards yet'}
               </p>
               {!cardsLoading ? (
                 <p className="text-xs leading-relaxed text-gray-400">
-                  在网页上选中英文单词，选好分类后点击「创建卡片」即可保存到这里
+                  Select English text on any webpage, pick a category, and click 'Create card'
+                  to save it here.
                 </p>
               ) : null}
             </div>
@@ -202,7 +203,7 @@ function App() {
                   </div>
                   <button
                     onClick={() => handleDelete(item.id)}
-                    aria-label="删除"
+                    aria-label="Delete"
                     className="shrink-0 rounded p-1.5 text-gray-300 hover:bg-red-50 hover:text-red-500"
                   >
                     <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
@@ -217,7 +218,7 @@ function App() {
       )}
 
       <footer className="px-4 py-3 text-center text-[11px] text-gray-300">
-        SpacedLink · 划词记单词
+        SpacedLink · save words while browsing · v{browser.runtime.getManifest().version}
       </footer>
     </div>
   );

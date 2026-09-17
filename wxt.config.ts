@@ -6,7 +6,7 @@ export default defineConfig({
   modules: ['@wxt-dev/module-react'],
   manifest: {
     name: 'SpacedLink',
-    description: '划词收藏生词，随手记住不认识的英文单词',
+    description: 'Save words by selecting text.',
   },
   vite: () => ({
     plugins: [tailwindcss()],
