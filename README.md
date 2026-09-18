@@ -41,10 +41,10 @@ VITE_GOOGLE_CLIENT_ID=
 `VITE_GOOGLE_CLIENT_ID` is a Google Cloud OAuth 2.0 **Web application** client. Create it at Console > APIs & Services > Credentials, then add the authorize redirect URI to the client:
 
 ```
-https://oahcggekcfojikcodnneimadckjcnpec.chromiumapp.org/
+https://<extension-id>.chromiumapp.org/
 ```
 
-(The host is the extension ID, pinned by the `key` in `wxt.config.ts`. If you change the key, re-derive the ID and update the redirect URI accordingly.)
+The host is the extension's ID. If you pin it with a `key` in `wxt.config.ts`, load the extension once and read the ID from `chrome://extensions`; register that exact URI in the OAuth client. If you change the `key`, the ID changes and the redirect URI must be updated to match.
 
 ## Development
 
@@ -74,4 +74,4 @@ wxt.config.ts         # WXT/manifest config (name, description, key, permissions
 
 ## License
 
-AGPL-3.0. SpacedLink Copyright (C) 2026 Daniel Zhang. See [LICENSE](LICENSE).
+AGPL-3.0. See [LICENSE](LICENSE).
