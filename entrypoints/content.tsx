@@ -16,6 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 import { createRoot } from 'react-dom/client';
+import { browser } from 'wxt/browser';
 import { WordTooltip } from '@/components/word-tooltip/WordTooltip';
 import { setWordTooltip, hideWordTooltip } from '@/components/word-tooltip/PopupStore';
 import '@/styles/tooltip.css';
@@ -74,20 +75,11 @@ export default defineContentScript({
     });
     ui.mount();
 
-    function showForSelection(): void {
-      const text = getSelectedText();
-      if (!text || !ENGLISH_RE.test(text)) {
-        hideWordTooltip();
-        return;
-      }
-      let rect = getSelectionRect();
-      if (!rect) {
-        const active = document.activeElement;
-        if (active instanceof HTMLInputElement || active instanceof HTMLTextAreaElement) {
-          rect = active.getBoundingClientRect();
-        }
-      }
-      if (!rect) {
+    async function showForSelection(text: string, rect: DOMRect): Promise<void> {
+      const auth = (await browser.runtime.sendMessage({ type: 'get-auth-state' })) as
+        | { ok: true; signedIn: boolean }
+        | { ok: false; error: string };
+      if (!auth?.ok || !auth.signedIn) {
         hideWordTooltip();
         return;
       }
@@ -109,7 +101,23 @@ export default defineContentScript({
 
     function onMouseUp(event: MouseEvent): void {
       if (isInsideOurUi(event)) return;
-      showForSelection();
+      const text = getSelectedText();
+      if (!text || !ENGLISH_RE.test(text)) {
+        hideWordTooltip();
+        return;
+      }
+      let rect = getSelectionRect();
+      if (!rect) {
+        const active = document.activeElement;
+        if (active instanceof HTMLInputElement || active instanceof HTMLTextAreaElement) {
+          rect = active.getBoundingClientRect();
+        }
+      }
+      if (!rect) {
+        hideWordTooltip();
+        return;
+      }
+      void showForSelection(text, rect);
     }
 
     function onKeyDown(event: KeyboardEvent): void {

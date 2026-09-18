@@ -16,7 +16,12 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 import { initializeApp } from 'firebase/app';
-import { GoogleAuthProvider, getAuth, signInWithCredential } from 'firebase/auth';
+import {
+  GoogleAuthProvider,
+  getAuth,
+  onAuthStateChanged,
+  signInWithCredential,
+} from 'firebase/auth';
 import type { User } from 'firebase/auth';
 import { doc, getDoc, getFirestore } from 'firebase/firestore';
 import { browser } from 'wxt/browser';
@@ -39,9 +44,20 @@ const DEFAULTS = [
   'Other',
 ];
 
-export function getCurrentUser(): User | null {
-  return auth.currentUser;
-}
+let latestUser: User | null = null;
+let authSettled = false;
+let markAuthSettled!: () => void;
+const authReady = new Promise<void>((resolve) => {
+  markAuthSettled = resolve;
+});
+
+onAuthStateChanged(auth, (user) => {
+  latestUser = user;
+  if (!authSettled) {
+    authSettled = true;
+    markAuthSettled();
+  }
+});
 
 function buildGoogleAuthUrl(): string {
   const redirectUri = `https://${browser.runtime.id}.chromiumapp.org/`;
@@ -69,7 +85,12 @@ export async function signInWithGoogle(): Promise<User> {
 }
 
 export async function ensureSignIn(): Promise<User | null> {
-  return getCurrentUser();
+  if (!authSettled) await authReady;
+  return auth.currentUser ?? latestUser;
+}
+
+export async function isSignedIn(): Promise<boolean> {
+  return (await ensureSignIn()) !== null;
 }
 
 export async function getCategoryList(): Promise<string[]> {

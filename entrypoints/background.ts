@@ -18,11 +18,17 @@
 import { browser } from 'wxt/browser';
 import { addCard, deleteCard, getCards } from '@/utils/cards';
 import type { BackgroundMessage } from '@/utils/cards';
-import { getCategoryList, signInWithGoogle } from '@/utils/firebase';
+import { getCategoryList, isSignedIn, signInWithGoogle } from '@/utils/firebase';
 
 export default defineBackground(() => {
   browser.runtime.onMessage.addListener(async (msg: BackgroundMessage) => {
     switch (msg?.type) {
+      case 'get-auth-state':
+        try {
+          return { ok: true, signedIn: await isSignedIn() } as const;
+        } catch (error) {
+          return { ok: false, error: String(error) } as const;
+        }
       case 'sign-in':
         try {
           await signInWithGoogle();

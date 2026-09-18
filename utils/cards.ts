@@ -71,6 +71,7 @@ export type BackgroundMessage =
   | { type: 'delete-card'; payload: { id: string } }
   | { type: 'get-categories' }
   | { type: 'get-cards' }
+  | { type: 'get-auth-state' }
   | { type: 'sign-in' };
 
 export type BackgroundResponse<T> =
